@@ -1,0 +1,87 @@
+A2A Protocol Documentation
+
+Overview
+
+Agents in the Agent Marketplace communicate using a simple JSON-based
+Agent-to-Agent (A2A) protocol. The orchestrator (Django API) sends a
+task message to an agent. The agent processes the request and returns a
+result in JSON format.
+
+This protocol defines the structure of messages exchanged between the
+orchestrator and agents.
+
+------------------------------------------------------------------------
+
+A2A Task Message Format
+
+Every task sent from the orchestrator to an agent follows this JSON
+format:
+
+{ “task_id”: “string”, “capability”: “string”, “input”: “string”,
+“context”: {} }
+
+Field Descriptions
+
+task_id Unique identifier for the task. Usually generated using a UUID.
+
+capability Defines which capability the agent must support (e.g., math,
+summarization, search).
+
+input The actual task input provided by the user.
+
+context Optional metadata for passing additional information between
+agents.
+
+------------------------------------------------------------------------
+
+Example 1 – Math Task
+
+Request sent to Math Agent
+
+{ “task_id”: “1234-abcd”, “capability”: “math”, “input”: “2 + 2”,
+“context”: {} }
+
+Response from Math Agent
+
+{ “result”: 4 }
+
+------------------------------------------------------------------------
+
+Example 2 – Text Summarization
+
+Request sent to Summarizer Agent
+
+{ “task_id”: “5678-efgh”, “capability”: “summarization”, “input”:
+“Artificial intelligence is transforming industries and automating
+tasks.”, “context”: {} }
+
+Response from Agent
+
+{ “summary”: “AI is transforming industries and automating tasks.” }
+
+------------------------------------------------------------------------
+
+Example 3 – Web Search via MCP Gateway
+
+Request sent to MCP Gateway Agent
+
+{ “task_id”: “9012-ijkl”, “capability”: “search”, “input”: “Agentic AI
+explained”, “context”: {} }
+
+Response returned
+
+{ “results”: [ “Agentic AI refers to systems where autonomous agents
+perform tasks.”, “Agentic workflows allow AI agents to collaborate and
+solve problems.” ] }
+
+------------------------------------------------------------------------
+
+Communication Flow
+
+1.  User sends request from Streamlit UI.
+2.  Streamlit calls Django API endpoint /api/task.
+3.  Django orchestrator searches registry for an agent with the required
+    capability.
+4.  Django sends the task message (JSON format) to the agent endpoint.
+5.  Agent processes the request and returns a JSON response.
+6.  Django forwards the response back to the Streamlit UI.
