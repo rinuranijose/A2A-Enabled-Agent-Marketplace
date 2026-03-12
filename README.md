@@ -80,8 +80,9 @@ Responsible for:
 API endpoints:
 
 ```
-GET  /api/agents/list
 POST /api/agents/register
+GET  /api/agents/list
+GET  /api/agents/search
 POST /api/task
 ```
 
