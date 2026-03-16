@@ -5,7 +5,7 @@ REM Start Redis
 start cmd /k "cd /d C:\Users\USER && redis-server"
 
 REM Start Ollama
-start cmd /k "ollama run phi3"
+start cmd /k "ollama serve"
 
 REM Start Django Backend
 start cmd /k "cd /d %cd%\registry_service && python manage.py runserver"

@@ -65,7 +65,8 @@ def orchestrate_task(request):
     }
 
     try:
-        response = requests.post(agent.endpoint_url, json=task, timeout=10)
+        response = requests.post(agent.endpoint_url, json=task, timeout=30)
+        print(response)
         return Response(response.json())
     except requests.exceptions.RequestException:
         return Response({"error": "Agent not reachable"})

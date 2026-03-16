@@ -17,8 +17,8 @@ def web_search(query: str):
             "snippet": "AI agents will collaborate, reason, and automate workflows across systems."
         }
     ]
-
-    return results
+    ans=next((item["snippet"] for item in results if item["title"] == query), None)
+    return ans
 
 
 if __name__ == "__main__":

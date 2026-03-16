@@ -2,18 +2,19 @@ import requests
 import subprocess
 import json
 from flask import Flask, request, jsonify
-
+import time
 app = Flask(__name__)
 
 REGISTRY_URL = "http://localhost:8000/api/agents/register"
 
-# Start MCP tool process
+# Start MCP tool process 
 mcp_process = subprocess.Popen(
     ["python", "web_search_tool.py"],
     stdin=subprocess.PIPE,
     stdout=subprocess.PIPE,
     text=True,
 )
+
 
 def register():
     agent_data = {
@@ -29,6 +30,27 @@ def register():
     except Exception as e:
         print("Registration failed:", e)
 
+def initialize_mcp():
+    init_payload = {
+        "jsonrpc": "2.0",
+        "id": 0,
+        "method": "initialize",
+        "params": {
+            "protocolVersion": "2024-11-05",
+            "capabilities": {},
+            "clientInfo": {
+                "name": "gateway",
+                "version": "1.0"
+            }
+        }
+    }
+
+    mcp_process.stdin.write(json.dumps(init_payload) + "\n")
+    mcp_process.stdin.flush()
+
+    response = mcp_process.stdout.readline()
+    print("MCP initialized:", response)
+
 
 def call_mcp_tool(query):
 
@@ -37,18 +59,18 @@ def call_mcp_tool(query):
         "id": 1,
         "method": "tools/call",
         "params": {
-            "name": "search",
+            "name": "web_search",
             "arguments": {
                 "query": query
             }
         }
     }
-
+    print("Sending:", request_payload)
     mcp_process.stdin.write(json.dumps(request_payload) + "\n")
     mcp_process.stdin.flush()
 
     response = mcp_process.stdout.readline()
-
+    print("Received:", response)
     return json.loads(response)
 
 
@@ -81,4 +103,5 @@ def execute():
 
 if __name__ == "__main__":
     register()
+    initialize_mcp()
     app.run(port=8010)

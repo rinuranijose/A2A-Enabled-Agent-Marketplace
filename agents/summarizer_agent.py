@@ -6,7 +6,6 @@ app = Flask(__name__)
 
 REGISTRY_URL = "http://localhost:8000/api/agents/register"
 
-
 def register():
 
     agent_data = {
